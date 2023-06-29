@@ -1,0 +1,195 @@
+﻿openapi: 3.0.3
+info:
+  title: Buber Dinner
+  description: Buber Dinner API
+  version: 1.0.0
+
+tags:
+  - name: Buber Dinner
+    description: Buber Dinner menu API
+
+servers:
+  - url: 'https://localhost:5167'
+
+paths:
+  ######################################################################
+  # Auth ENDPOINTS
+  ######################################################################
+  /v1/auth/register:
+    post:
+      summary: Registers an user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRegisterRequest'
+      responses: 
+        '200':
+          description: User registration succesful.
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '409':
+          description: User already exists.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+  /v1/auth/login:
+    post:
+      summary: Logins an user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthLoginRequest'
+      responses:
+        '200':
+          description: User registration succesful.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '409':
+          description: User already exists.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+components: 
+  schemas:
+    UserId:
+      description: The identifier of a vehicle.
+      type: string
+      example: d89c2d9a-eb3e-4075-95ff-b920b55aa104
+    FirstName:
+      description: First Name.
+      type: string
+      example: Solid
+      maxLength: 100
+      minLength: 2
+    LastName:
+      description: Last Name.
+      type: string
+      example: Snake
+      maxLength: 100
+      minLength: 2
+    Email:
+      description: User email.
+      type: string
+      example: roger@metalgear.com
+      maxLength: 50
+      minLength: 2
+    Password:
+      description: User password
+      type: string
+      maxLength: 40
+      minLength: 6
+    Token:
+      description: Token
+      type: string
+    User:
+      description: User
+      type: object
+      properties: 
+        id:
+          $ref: '#/components/schemas/UserId'
+        firstName:
+          $ref: '#/components/schemas/FirstName'
+        lastName:
+          $ref: '#/components/schemas/LastName'
+        email:
+          $ref: '#/components/schemas/Email'
+        token:
+          $ref: '#/components/schemas/Token'
+    ########################################################################################################################
+    # CONFIGURATION SCHEMAS
+    ########################################################################################################################
+    AuthRegisterRequest:
+      description: Authentication request
+      type: object
+      properties:
+        firstName:
+          $ref: '#/components/schemas/FirstName'
+        lastName:
+          $ref: '#/components/schemas/LastName'
+        email:
+          $ref: '#/components/schemas/Email'
+        password:
+          $ref: '#/components/schemas/Password'
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+    AuthLoginRequest:
+      description: Login endpoint.
+      type: object
+      properties:
+        email:
+          $ref: '#/components/schemas/Email'
+        password:
+          $ref: '#/components/schemas/Password'
+      required:
+        - email
+        - password
+    ########################################################################################################################
+    # ERRORS
+    ########################################################################################################################
+    ClientError:
+      description: Error message details.
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message details.
+        offendingValues:
+          type: array
+          description: The list of offending values.
+          items:
+            $ref: '#/components/schemas/OffendingValue'
+    OffendingValue:
+      description: Failure details of some field constraint/requirement violation.
+      type: object
+      properties:
+        field:
+          type: string
+          description: The name/path of the offended field.
+        message:
+          type: string
+          description: A brief explanation of the violation.
+        invalidValue:
+          type: string
+          description: The invalid value provided.
+  responses:
+    BadRequest:
+      description: The provided request has an invalid structure or data format.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClientError'
+          examples:
+            MissingRequiredFields:
+              summary: Missing Required Field
+              value:
+                message: "The provided request has an invalid structure or data format"
+                offendingValues:
+                  - field: "package"
+                    message: "must not be null"
+                  - field: "color"
+                    message: "must not be null"
+    ServerError:
+      description: Unexpected error occured.
+      content:
+        application/json:
+          schema:
+            description: A server error message.
+            type: object
+            properties:
+              message:
+                type: string
+                description: Error message details.
+                example: Oops! Something went wrong trying to process your request. Please try again later or contact the support team.
+            required:
+              - message
