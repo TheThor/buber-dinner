@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using BuberDinner.Application.Common.Interfaces.Authentication;
-using BuberDinner.Application.Common.Services;
+using BuberDinner.Application.Common.Interfaces.Services;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
@@ -29,7 +29,6 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         */
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(
-                //TODO: understand why it worked in the tutorial
                 Encoding.UTF8.GetBytes(_jwtSettings.Secret)
             ),
             SecurityAlgorithms.HmacSha256
