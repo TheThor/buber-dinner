@@ -36,8 +36,6 @@ public class AuthenticationService : IAuthenticationService
         _userRepository.Add(user);
         
         // Create JWT Token
-        Guid userId = Guid.NewGuid();
-        
         var token = _jwtTokenGenerator.GenerateToken(user.Id, firstname, lastName);
 
         return new AuthenticationResult(
@@ -53,7 +51,7 @@ public class AuthenticationService : IAuthenticationService
     {
         if (_userRepository.GetUserByEmail(email) is not User user)
         {
-            throw new Exception("User with given email already exists.");
+            throw new Exception("User with given email doesn't exist.");
         }
 
         if (user.Password != password)

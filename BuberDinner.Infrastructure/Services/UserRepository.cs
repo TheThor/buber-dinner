@@ -5,7 +5,7 @@ namespace BuberDinner.Application.Services;
 
 public class UserRepository : IUserRepository
 {
-    private readonly List<User> _users = new();
+    private static readonly List<User> _users = new();
     public User? GetUserByEmail(string email)
     {
         return _users.SingleOrDefault(user => user.Email == email);
