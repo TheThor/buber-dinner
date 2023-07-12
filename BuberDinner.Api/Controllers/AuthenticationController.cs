@@ -32,7 +32,7 @@ public class AuthenticationController : ControllerBase
 
         return Ok(response);
     }
-    
+
     [HttpPost("login")]
     public IActionResult Login(LoginRequest request)
     {
